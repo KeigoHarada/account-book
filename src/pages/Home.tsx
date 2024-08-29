@@ -1,11 +1,24 @@
-import React from "react";
+import { Box } from "@mui/material";
+import MonthlySummary from "../components/MonthlySummary";
+import Calendar from "../components/Calendar";
+import TransactionMenu from "../components/TransactionMenu";
+import TransactionForm from "../components/TransactionForm";
 
 const Home = () => {
     return (
-        <div>
-            <h1>Home</h1>
-            <p>Welcome to the Home page</p>
-        </div>
+
+        <Box sx={{ display: "flex" }}>
+            {/* 右側 */}
+            <Box sx={{ flexGrow: 1 }}>
+                <MonthlySummary />
+                <Calendar />
+            </Box >
+            {/* 右側 */}
+            <Box >
+                <TransactionMenu />
+                <TransactionForm />
+            </Box>
+        </Box>
     );
 }
 export default Home;
