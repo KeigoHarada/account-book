@@ -1,19 +1,31 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import "../calenders.css"
-import { EventContentArg } from '@fullcalendar/core/index.js'
+import { DatesSetArg, EventContentArg } from '@fullcalendar/core/index.js'
 import { calculateDailyTransaction } from '../utils/financeCalculations'
-import { Transaction } from '../types'
+import { Balance, CalendarContent, Transaction } from '../types'
 
 interface CalendarProps {
     monthlyTransactions: Transaction[];
+    setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
 }
-const Calendar = (monthlyTransactions: CalendarProps) => {
-    const events = [
-        { title: 'event 1', date: '2024-08-01', income: 1000, expence: 500, balance: 500 },
-        { title: 'event 2', date: '2024-08-02', income: 2000, expence: 1000, balance: 1000 },
-    ]
-    const dailyBalance = calculateDailyTransaction(monthlyTransactions)
+
+const Calendar = ({ monthlyTransactions, setCurrentMonth }: CalendarProps) => {
+    const dailyBalances = calculateDailyTransaction(monthlyTransactions)
+
+    const createCalendarEvents = (dailyBalances: Record<string, Balance>): CalendarContent[] => {
+        return Object.keys(dailyBalances).map((date) => {
+            const dailyBalance = dailyBalances[date]
+            return {
+                start: date,
+                income: dailyBalance.income.toString(),
+                expence: dailyBalance.expence.toString(),
+                balance: dailyBalance.balance.toString()
+
+            }
+        })
+    }
+    const calendarEvents = createCalendarEvents(dailyBalances)
 
     const renderEventContent = (eventInfo: EventContentArg) => {
         return (
@@ -32,13 +44,18 @@ const Calendar = (monthlyTransactions: CalendarProps) => {
         )
     }
 
+    const hundleDateSet = (dateInfo: DatesSetArg) => {
+        setCurrentMonth(dateInfo.view.currentStart)
+    }
+
     return (
         <FullCalendar
             locale={"ja"}
             plugins={[dayGridPlugin]}
             initialView="dayGridMonth"
-            events={events}
+            events={calendarEvents}
             eventContent={renderEventContent}
+            datesSet={hundleDateSet}
         />
     )
 }
