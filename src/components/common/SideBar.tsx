@@ -40,7 +40,6 @@ const SideBar = ({ drawerWidth, mobileOpen, handleDrawerTransitionEnd, handleDra
             <List>
                 {menuItems.map((item, index) => (
                     <NavLink to={item.path} key={index} style={({ isActive }) => {
-                        console.log("選択されたメニュー", item.text, isActive)
                         return {
                             ...baseLinkStyle,
                             ...(isActive ? activeLinkStyle : {})
@@ -62,7 +61,7 @@ const SideBar = ({ drawerWidth, mobileOpen, handleDrawerTransitionEnd, handleDra
     return (
         <Box
             component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+            sx={{ width: { md: drawerWidth }, flexShrink: { sm: 0 } }}
             aria-label="mailbox folders"
         >
             <Drawer
@@ -83,7 +82,7 @@ const SideBar = ({ drawerWidth, mobileOpen, handleDrawerTransitionEnd, handleDra
             <Drawer
                 variant="permanent"
                 sx={{
-                    display: { xs: 'none', sm: 'block' },
+                    display: { xs: 'none', md: 'block' },
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                 }}
             >
