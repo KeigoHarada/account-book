@@ -4,13 +4,15 @@ import "../calenders.css"
 import { DatesSetArg, EventContentArg } from '@fullcalendar/core/index.js'
 import { calculateDailyTransaction } from '../utils/financeCalculations'
 import { Balance, CalendarContent, Transaction } from '../types'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 
 interface CalendarProps {
     monthlyTransactions: Transaction[];
     setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
+    setCurrentDay: React.Dispatch<React.SetStateAction<string>>
 }
 
-const Calendar = ({ monthlyTransactions, setCurrentMonth }: CalendarProps) => {
+const Calendar = ({ monthlyTransactions, setCurrentMonth, setCurrentDay }: CalendarProps) => {
     const dailyBalances = calculateDailyTransaction(monthlyTransactions)
 
     const createCalendarEvents = (dailyBalances: Record<string, Balance>): CalendarContent[] => {
@@ -45,17 +47,22 @@ const Calendar = ({ monthlyTransactions, setCurrentMonth }: CalendarProps) => {
     }
 
     const hundleDateSet = (dateInfo: DatesSetArg) => {
-        setCurrentMonth(dateInfo.view.currentStart)
+        setCurrentMonth(dateInfo.start)
+    }
+
+    const hundleDateClick = (dateInfo: DateClickArg) => {
+        setCurrentDay(dateInfo.dateStr)
     }
 
     return (
         <FullCalendar
             locale={"ja"}
-            plugins={[dayGridPlugin]}
+            plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             events={calendarEvents}
             eventContent={renderEventContent}
             datesSet={hundleDateSet}
+            dateClick={hundleDateClick}
         />
     )
 }
