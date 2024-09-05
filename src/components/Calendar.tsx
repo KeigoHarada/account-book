@@ -5,16 +5,20 @@ import { DatesSetArg, EventContentArg } from '@fullcalendar/core/index.js'
 import { calculateDailyTransaction } from '../utils/financeCalculations'
 import { Balance, CalendarContent, Transaction } from '../types'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
+import { useTheme } from '@mui/material'
+import { isSameMonth } from 'date-fns'
 
 interface CalendarProps {
     monthlyTransactions: Transaction[];
     setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
     setCurrentDay: React.Dispatch<React.SetStateAction<string>>
+    currentDay: string
+    today: string
 }
 
-const Calendar = ({ monthlyTransactions, setCurrentMonth, setCurrentDay }: CalendarProps) => {
+const Calendar = ({ monthlyTransactions, setCurrentMonth, setCurrentDay, currentDay, today }: CalendarProps) => {
     const dailyBalances = calculateDailyTransaction(monthlyTransactions)
-
+    const theme = useTheme()
     const createCalendarEvents = (dailyBalances: Record<string, Balance>): CalendarContent[] => {
         return Object.keys(dailyBalances).map((date) => {
             const dailyBalance = dailyBalances[date]
@@ -46,8 +50,20 @@ const Calendar = ({ monthlyTransactions, setCurrentMonth, setCurrentDay }: Calen
         )
     }
 
+    const backgroundEvent = {
+        start: currentDay,
+        end: currentDay,
+        display: 'background',
+        color: theme.palette.incomeColor.light
+    }
+
     const hundleDateSet = (dateInfo: DatesSetArg) => {
-        setCurrentMonth(dateInfo.start)
+        const currentMonth = dateInfo.view.currentStart;
+        setCurrentMonth(dateInfo.start);
+        const todayDate = new Date()
+        if (isSameMonth(currentMonth, todayDate)) {
+            setCurrentDay(today);
+        }
     }
 
     const hundleDateClick = (dateInfo: DateClickArg) => {
@@ -59,7 +75,7 @@ const Calendar = ({ monthlyTransactions, setCurrentMonth, setCurrentDay }: Calen
             locale={"ja"}
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
-            events={calendarEvents}
+            events={[...calendarEvents, backgroundEvent]}
             eventContent={renderEventContent}
             datesSet={hundleDateSet}
             dateClick={hundleDateClick}

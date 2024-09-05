@@ -1,6 +1,6 @@
 export type TransactionType = "income" | "expence";
-export type IncomeCategory = "salary" | "bonus" | "pocketmoney" | "other";
-export type ExpenceCategory = "food" | "book" | "home" | "other";
+export type IncomeCategory = "給料" | "ボーナス" | "お小遣い" | "その他";
+export type ExpenceCategory = "食費" | "交通費" | "その他";
 
 export interface Transaction {
     id: string;
